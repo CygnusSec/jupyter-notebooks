@@ -5,6 +5,7 @@ FROM python:3.10-slim
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV SHELL=/bin/bash
+ENV GIT_DISCOVERY_ACROSS_FILESYSTEM=1
 
 # Working directory
 WORKDIR /app/workspace
@@ -23,6 +24,9 @@ RUN apt-get update && apt-get install -y \
     npm \
     && rm -rf /var/lib/apt/lists/*
 
+# Mark all directories as safe for git
+RUN git config --global --add safe.directory '*'
+
 # Python packages
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir \
@@ -34,9 +38,12 @@ RUN pip install --no-cache-dir --upgrade pip && \
     seaborn \
     scikit-learn
 
+# Copy entrypoint
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 # Expose Jupyter port
 EXPOSE 8888
 
-# Start JupyterLab
-# Token is controlled by JUPYTER_TOKEN env var (empty = no auth)
-CMD ["bash", "-c", "jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root --ServerApp.token=\"${JUPYTER_TOKEN:-}\" --ServerApp.root_dir=/app/workspace --ServerApp.terminado_settings='{\"shell_command\": [\"/bin/bash\"]}'"]
+# Start via entrypoint
+CMD ["/entrypoint.sh"]
