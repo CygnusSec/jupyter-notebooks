@@ -7,7 +7,7 @@ services:
     ports:
       - "${JUPYTER_PORT:-8888}:8888"
     volumes:
-      - ./notebooks:/app/notebooks
+      - ./workspace:/app/workspace
       - ~/.ssh:/root/.ssh:ro
       - ~/.gitconfig:/root/.gitconfig:ro
     deploy:

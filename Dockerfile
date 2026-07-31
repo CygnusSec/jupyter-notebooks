@@ -7,7 +7,7 @@ ENV PYTHONUNBUFFERED=1
 ENV SHELL=/bin/bash
 
 # Working directory
-WORKDIR /app/notebooks
+WORKDIR /app/workspace
 
 # System dependencies
 RUN apt-get update && apt-get install -y \
@@ -19,6 +19,8 @@ RUN apt-get update && apt-get install -y \
     bash \
     curl \
     procps \
+    nodejs \
+    npm \
     && rm -rf /var/lib/apt/lists/*
 
 # Python packages
