@@ -132,3 +132,7 @@ RUN apt-get update && apt-get install -y \
 ```
 
 Rebuild after any Dockerfile changes with `docker compose up --build`.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
