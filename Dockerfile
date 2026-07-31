@@ -39,4 +39,4 @@ EXPOSE 8888
 
 # Start JupyterLab
 # Token is controlled by JUPYTER_TOKEN env var (empty = no auth)
-CMD ["bash", "-c", "jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root --ServerApp.token=\"${JUPYTER_TOKEN:-}\" --ServerApp.terminado_settings='{\"shell_command\": [\"/bin/bash\"]}'"]
+CMD ["bash", "-c", "jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root --ServerApp.token=\"${JUPYTER_TOKEN:-}\" --ServerApp.root_dir=/app/workspace --ServerApp.terminado_settings='{\"shell_command\": [\"/bin/bash\"]}'"]
