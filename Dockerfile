@@ -30,9 +30,5 @@ RUN pip install --no-cache-dir --upgrade pip && \
 EXPOSE 8888
 
 # Start Jupyter Notebook
-CMD ["jupyter", "notebook", \
-     "--ip=0.0.0.0", \
-     "--port=8888", \
-     "--no-browser", \
-     "--allow-root", \
-     "--NotebookApp.token=''"]
+# Token is controlled by JUPYTER_TOKEN env var (empty = no auth)
+CMD ["sh", "-c", "jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root --NotebookApp.token=\"${JUPYTER_TOKEN:-}\""]

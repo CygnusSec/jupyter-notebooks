@@ -15,6 +15,7 @@ services:
           memory: "${MEMORY_LIMIT:-8G}"
     shm_size: "${SHM_SIZE:-2gb}"
     environment:
+      - JUPYTER_TOKEN=${JUPYTER_TOKEN:-}
       - JUPYTER_ENABLE_LAB=yes
       - PYTHONUNBUFFERED=1
       - JUPYTER_IOPUB_DATA_RATE_LIMIT=10000000000
