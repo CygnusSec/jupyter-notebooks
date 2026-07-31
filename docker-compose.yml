@@ -1,0 +1,22 @@
+services:
+  jupyter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: jupyter-notebook
+    ports:
+      - "${JUPYTER_PORT:-8888}:8888"
+    volumes:
+      - ./notebooks:/app/notebooks
+    deploy:
+      resources:
+        limits:
+          cpus: "${CPU_LIMIT:-4.0}"
+          memory: "${MEMORY_LIMIT:-8G}"
+    shm_size: "${SHM_SIZE:-2gb}"
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+      - PYTHONUNBUFFERED=1
+      - JUPYTER_IOPUB_DATA_RATE_LIMIT=10000000000
+      - JUPYTER_IOPUB_MSG_RATE_LIMIT=100000
+    restart: unless-stopped
