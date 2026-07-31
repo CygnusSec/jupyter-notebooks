@@ -1,7 +1,12 @@
 #!/bin/bash
 set -e
 
-# Ensure git is configured for the workspace
+# Copy host gitconfig if available (mounted read-only at /etc/gitconfig.host)
+if [ -f /etc/gitconfig.host ]; then
+    cp /etc/gitconfig.host /root/.gitconfig
+fi
+
+# Ensure git trusts all directories (required for Docker volume ownership)
 git config --global --add safe.directory '*'
 git config --global init.defaultBranch main
 

@@ -9,7 +9,7 @@ services:
     volumes:
       - jupyter-workspace:/app/workspace
       - ~/.ssh:/root/.ssh:ro
-      - ~/.gitconfig:/root/.gitconfig:ro
+      - ~/.gitconfig:/etc/gitconfig.host:ro
     deploy:
       resources:
         limits:
