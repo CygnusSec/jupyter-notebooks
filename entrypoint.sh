@@ -10,6 +10,11 @@ fi
 git config --global --add safe.directory '*'
 git config --global init.defaultBranch main
 
+# Configure GitHub token for jupyterlab-github extension
+if [ -n "${GITHUB_ACCESS_TOKEN:-}" ]; then
+    echo "c.GitHubConfig.access_token = '${GITHUB_ACCESS_TOKEN}'" >> /root/.jupyter/jupyter_server_config.py
+fi
+
 # Start JupyterLab
 exec jupyter lab \
     --ip=0.0.0.0 \

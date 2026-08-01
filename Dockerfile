@@ -56,7 +56,6 @@ RUN Rscript -e "IRkernel::installspec(user = FALSE)"
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir \
     jupyterlab \
-    jupyterlab-git \
     jupyterlab-lsp \
     python-lsp-server[all] \
     jupyterlab_code_formatter \
@@ -70,6 +69,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
     pygwalker \
     jupyterlab-latex \
     jupyterlab-github \
+    jupyterlab-json \
     pandas \
     numpy \
     matplotlib \
