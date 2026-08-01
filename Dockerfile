@@ -34,7 +34,25 @@ RUN apt-get update && apt-get install -y \
 # Mark all directories as safe for git
 RUN git config --global --add safe.directory '*'
 
-# Python packages & Jupyter extensions
+# Install conda (for C++ and R kernels)
+RUN curl -fsSL https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-$(uname -m).sh -o /tmp/miniforge.sh && \
+    bash /tmp/miniforge.sh -b -p /opt/conda && \
+    rm /tmp/miniforge.sh
+ENV PATH="/opt/conda/bin:$PATH"
+
+# Install C++ and R kernels via conda
+RUN conda install -y -c conda-forge xeus-cling r-irkernel r-base && \
+    conda clean -afy
+
+# Register C++ kernels
+RUN jupyter kernelspec install /opt/conda/share/jupyter/kernels/xcpp11 --sys-prefix && \
+    jupyter kernelspec install /opt/conda/share/jupyter/kernels/xcpp14 --sys-prefix && \
+    jupyter kernelspec install /opt/conda/share/jupyter/kernels/xcpp17 --sys-prefix
+
+# Register R kernel
+RUN Rscript -e "IRkernel::installspec(user = FALSE)"
+
+# Python packages, JupyterLab & extensions (installed AFTER conda to ensure pip jupyter wins)
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir \
     jupyterlab \
@@ -56,32 +74,17 @@ RUN pip install --no-cache-dir --upgrade pip && \
     seaborn \
     scikit-learn
 
-# C/C++ Jupyter kernel (xeus-cling via conda)
-RUN curl -fsSL https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-$(uname -m).sh -o /tmp/miniforge.sh && \
-    bash /tmp/miniforge.sh -b -p /opt/conda && \
-    rm /tmp/miniforge.sh
-ENV PATH="/opt/conda/bin:$PATH"
-RUN conda install -y -c conda-forge xeus-cling r-irkernel r-base && \
-    conda clean -afy
-# Register xeus-cling kernels for Jupyter
-RUN jupyter kernelspec install /opt/conda/share/jupyter/kernels/xcpp11 --sys-prefix && \
-    jupyter kernelspec install /opt/conda/share/jupyter/kernels/xcpp14 --sys-prefix && \
-    jupyter kernelspec install /opt/conda/share/jupyter/kernels/xcpp17 --sys-prefix
-# Register R kernel
-RUN Rscript -e "IRkernel::installspec(user = FALSE)"
+# Verify extensions are registered
+RUN jupyter server extension list
 
 # Copy entrypoint
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-# Show hidden files in JupyterLab file browser
+# Show hidden files & allow server to serve them
 RUN mkdir -p /root/.jupyter/lab/user-settings/\@jupyterlab/filebrowser-extension && \
     echo '{"showHiddenFiles": true}' > /root/.jupyter/lab/user-settings/\@jupyterlab/filebrowser-extension/browser.jupyterlab-settings && \
-    mkdir -p /root/.jupyter/lab/user-settings/\@jupyterlab/docmanager-extension && \
-    echo '{"showHiddenFiles": true}' > /root/.jupyter/lab/user-settings/\@jupyterlab/docmanager-extension/plugin.jupyterlab-settings
-
-# Allow server to serve hidden files
-RUN mkdir -p /root/.jupyter && \
+    mkdir -p /root/.jupyter && \
     echo 'c.ContentsManager.allow_hidden = True' > /root/.jupyter/jupyter_server_config.py
 
 # Expose Jupyter port
