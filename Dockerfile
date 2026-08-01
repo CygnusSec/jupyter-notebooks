@@ -29,6 +29,9 @@ RUN apt-get update && apt-get install -y \
     clang \
     clang-format \
     valgrind \
+    texlive-xetex \
+    texlive-fonts-recommended \
+    latexmk \
     && rm -rf /var/lib/apt/lists/*
 
 # Mark all directories as safe for git
@@ -68,6 +71,9 @@ RUN pip install --no-cache-dir --upgrade pip && \
     jupyter-ai \
     lckr-jupyterlab-variableinspector \
     pygwalker \
+    jupyterlab-latex \
+    jupyterlab-github \
+    jupyterlab-codex-sidebar \
     pandas \
     numpy \
     matplotlib \
