@@ -75,8 +75,14 @@ COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # Show hidden files in JupyterLab file browser
-RUN mkdir -p /root/.jupyter/lab/user-settings/@jupyterlab/filebrowser-extension && \
-    echo '{"showHiddenFiles": true}' > /root/.jupyter/lab/user-settings/@jupyterlab/filebrowser-extension/browser.jupyterlab-settings
+RUN mkdir -p /root/.jupyter/lab/user-settings/\@jupyterlab/filebrowser-extension && \
+    echo '{"showHiddenFiles": true}' > /root/.jupyter/lab/user-settings/\@jupyterlab/filebrowser-extension/browser.jupyterlab-settings && \
+    mkdir -p /root/.jupyter/lab/user-settings/\@jupyterlab/docmanager-extension && \
+    echo '{"showHiddenFiles": true}' > /root/.jupyter/lab/user-settings/\@jupyterlab/docmanager-extension/plugin.jupyterlab-settings
+
+# Allow server to serve hidden files
+RUN mkdir -p /root/.jupyter && \
+    echo 'c.ContentsManager.allow_hidden = True' > /root/.jupyter/jupyter_server_config.py
 
 # Expose Jupyter port
 EXPOSE 8888
