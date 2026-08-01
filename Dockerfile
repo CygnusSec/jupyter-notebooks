@@ -70,7 +70,6 @@ RUN pip install --no-cache-dir --upgrade pip && \
     pygwalker \
     jupyterlab-latex \
     jupyterlab-github \
-    jupyterlab-codex-sidebar \
     pandas \
     numpy \
     matplotlib \
