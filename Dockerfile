@@ -48,7 +48,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
     jupyterlab-execute-time \
     jupyter-resource-usage \
     jupyter-ai \
-    jupyterlab-variableinspector \
+    lckr-jupyterlab-variableinspector \
     pygwalker \
     pandas \
     numpy \
