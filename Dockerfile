@@ -43,14 +43,14 @@ RUN curl -fsSL https://github.com/conda-forge/miniforge/releases/latest/download
     rm /tmp/miniforge.sh
 ENV PATH="/opt/conda/bin:$PATH"
 
-# Install C++ and R kernels via conda
-RUN conda install -y -c conda-forge xeus-cling r-irkernel r-base && \
+# Install C++ and R kernels via conda (also install jupyter in conda for kernelspec)
+RUN conda install -y -c conda-forge xeus-cling r-irkernel r-base jupyter && \
     conda clean -afy
 
-# Register C++ kernels
-RUN jupyter kernelspec install /opt/conda/share/jupyter/kernels/xcpp11 --sys-prefix && \
-    jupyter kernelspec install /opt/conda/share/jupyter/kernels/xcpp14 --sys-prefix && \
-    jupyter kernelspec install /opt/conda/share/jupyter/kernels/xcpp17 --sys-prefix
+# Register C++ kernels (using conda's jupyter)
+RUN /opt/conda/bin/jupyter kernelspec install /opt/conda/share/jupyter/kernels/xcpp11 --sys-prefix && \
+    /opt/conda/bin/jupyter kernelspec install /opt/conda/share/jupyter/kernels/xcpp14 --sys-prefix && \
+    /opt/conda/bin/jupyter kernelspec install /opt/conda/share/jupyter/kernels/xcpp17 --sys-prefix
 
 # Register R kernel
 RUN Rscript -e "IRkernel::installspec(user = FALSE)"
