@@ -47,10 +47,7 @@ ENV PATH="/opt/conda/bin:$PATH"
 RUN conda install -y -c conda-forge xeus-cling r-irkernel r-base jupyter && \
     conda clean -afy
 
-# Register C++ kernels (using conda's jupyter)
-RUN /opt/conda/bin/jupyter kernelspec install /opt/conda/share/jupyter/kernels/xcpp11 --sys-prefix && \
-    /opt/conda/bin/jupyter kernelspec install /opt/conda/share/jupyter/kernels/xcpp14 --sys-prefix && \
-    /opt/conda/bin/jupyter kernelspec install /opt/conda/share/jupyter/kernels/xcpp17 --sys-prefix
+# xeus-cling kernels are auto-registered by conda, no manual install needed
 
 # Register R kernel
 RUN Rscript -e "IRkernel::installspec(user = FALSE)"
