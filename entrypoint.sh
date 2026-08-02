@@ -15,7 +15,7 @@ if [ -n "${GITHUB_ACCESS_TOKEN:-}" ]; then
     echo "c.GitHubConfig.access_token = '${GITHUB_ACCESS_TOKEN}'" >> /root/.jupyter/jupyter_server_config.py
 fi
 
-# Start JupyterLab
+# Start JupyterLab in production mode
 exec jupyter lab \
     --ip=0.0.0.0 \
     --port=8888 \
@@ -23,4 +23,6 @@ exec jupyter lab \
     --allow-root \
     --ServerApp.token="${JUPYTER_TOKEN:-}" \
     --ServerApp.root_dir=/app/workspace \
-    --ServerApp.terminado_settings='{"shell_command": ["/bin/bash"]}'
+    --ServerApp.terminado_settings='{"shell_command": ["/bin/bash"]}' \
+    --ServerApp.allow_remote_access=True \
+    --LabApp.check_for_updates_class="jupyterlab.NeverCheckForUpdate"

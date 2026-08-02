@@ -69,6 +69,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
     pygwalker \
     jupyterlab-latex \
     jupyterlab-github \
+    jupyterhub \
     pandas \
     numpy \
     matplotlib \
@@ -83,10 +84,34 @@ COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # Show hidden files & allow server to serve them
+# Production hardening config
 RUN mkdir -p /root/.jupyter/lab/user-settings/\@jupyterlab/filebrowser-extension && \
     echo '{"showHiddenFiles": true}' > /root/.jupyter/lab/user-settings/\@jupyterlab/filebrowser-extension/browser.jupyterlab-settings && \
+    mkdir -p /root/.jupyter/lab/user-settings/\@jupyterlab/extensionmanager-extension && \
+    echo '{"enabled": false}' > /root/.jupyter/lab/user-settings/\@jupyterlab/extensionmanager-extension/plugin.jupyterlab-settings && \
     mkdir -p /root/.jupyter && \
-    echo 'c.ContentsManager.allow_hidden = True' > /root/.jupyter/jupyter_server_config.py
+    cat > /root/.jupyter/jupyter_server_config.py << 'EOF'
+# === Production Hardening ===
+
+# Allow hidden files in file browser
+c.ContentsManager.allow_hidden = True
+
+# Disable Extension Manager UI (prevent installing untrusted extensions at runtime)
+c.LabApp.extensions_in_dev_mode = False
+
+# Disable open-in-new-browser-tab behavior
+c.ServerApp.open_browser = False
+
+# Trust all origins (handled by reverse proxy)
+c.ServerApp.allow_origin = '*'
+
+# Disable XSRF for API behind reverse proxy (if needed)
+# c.ServerApp.disable_check_xsrf = True
+
+# Rate limiting
+c.ServerApp.iopub_data_rate_limit = 10000000000
+c.ServerApp.iopub_msg_rate_limit = 100000
+EOF
 
 # Expose Jupyter port
 EXPOSE 8888

@@ -1,0 +1,20 @@
+# JupyterHub image
+FROM python:3.10-slim
+
+RUN pip install --no-cache-dir \
+    jupyterhub \
+    dockerspawner \
+    oauthenticator \
+    nativeauthenticator \
+    bcrypt
+
+# Hub config
+COPY jupyterhub_config.py /srv/jupyterhub/jupyterhub_config.py
+COPY create_admin.py /srv/jupyterhub/create_admin.py
+COPY entrypoint_hub.sh /srv/jupyterhub/entrypoint_hub.sh
+RUN chmod +x /srv/jupyterhub/entrypoint_hub.sh
+WORKDIR /srv/jupyterhub
+
+EXPOSE 8000
+
+CMD ["/srv/jupyterhub/entrypoint_hub.sh"]

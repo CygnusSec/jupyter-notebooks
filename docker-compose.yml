@@ -1,30 +1,29 @@
 services:
-  jupyter:
+  jupyterhub:
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: jupyter-notebook
+      dockerfile: Dockerfile.hub
+    container_name: jupyterhub
     ports:
-      - "${JUPYTER_PORT:-8888}:8888"
+      - "${HUB_PORT:-8000}:8000"
     volumes:
-      - jupyter-workspace:/app/workspace
-      - ~/.ssh:/root/.ssh:ro
-      - ~/.gitconfig:/etc/gitconfig.host:ro
-    deploy:
-      resources:
-        limits:
-          cpus: "${CPU_LIMIT:-4.0}"
-          memory: "${MEMORY_LIMIT:-8G}"
-    shm_size: "${SHM_SIZE:-2gb}"
+      - /var/run/docker.sock:/var/run/docker.sock
+      - jupyterhub-data:/srv/jupyterhub
     environment:
-      - JUPYTER_TOKEN=${JUPYTER_TOKEN:-}
-      - JUPYTER_ENABLE_LAB=yes
-      - PYTHONUNBUFFERED=1
-      - JUPYTER_IOPUB_DATA_RATE_LIMIT=10000000000
-      - JUPYTER_IOPUB_MSG_RATE_LIMIT=100000
-      - GIT_DISCOVERY_ACROSS_FILESYSTEM=1
-      - GITHUB_ACCESS_TOKEN=${GITHUB_ACCESS_TOKEN:-}
+      - DOCKER_NOTEBOOK_IMAGE=jupyter-notebook-user:latest
+      - DOCKER_NETWORK_NAME=jupyter-network
+      - ADMIN_USERS=${ADMIN_USERS:-admin}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-}
+      - ALLOW_SIGNUP=${ALLOW_SIGNUP:-true}
+      - USER_MEM_LIMIT=${USER_MEM_LIMIT:-4G}
+      - USER_CPU_LIMIT=${USER_CPU_LIMIT:-2.0}
+    networks:
+      - jupyter-network
     restart: unless-stopped
 
+networks:
+  jupyter-network:
+    name: jupyter-network
+
 volumes:
-  jupyter-workspace:
+  jupyterhub-data:
